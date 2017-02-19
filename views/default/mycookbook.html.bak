@@ -1,0 +1,14 @@
+{{extend 'layout.html'}}
+<h1>My Recipes </h1>
+
+<style>
+    body {
+    padding-top: 50px;
+    margin-bottom: 60px;
+    background-image: url(../static/images/kitchen.jpg);
+    background-repeat:repeat-y;
+    background-size:100%;
+    margin-top:4%;
+    }
+</style>
+{{=form}}

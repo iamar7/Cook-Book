@@ -1,0 +1,26 @@
+{{extend 'layout.html'}}
+<div style="width: 48%; display: inline-block; ">
+<h2>
+    <i style="color: ForestGreen;">Recipie:</i> {{=page.title}}
+<br>
+<br>
+    <i style="color: ForestGreen;">Author:</i> {{=page.author}}
+<br>
+<br>
+    <i style="color: ForestGreen;">Uploaded on:</i> {{=page.date}}
+<br>
+<br>
+    <i style="color: ForestGreen;">How to Cook:</i> <pre>{{=page.description}}</pre>
+</i>
+</h2>
+<br>
+<br>
+<h2>
+{{if page.author==auth.user_id:}}
+{{s=A('EDIT',_class="btn btn-info",_href=URL('edit_post',args=page.id))}}
+{{pass}}
+</h2>
+
+</div><div style="width: 48%; display: inline-flex; ">
+<img style="height:75%;width:75%; margin-top:5%;" src="{{=URL('download', args=page.file)}}" />
+</div>

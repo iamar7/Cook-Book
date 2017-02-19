@@ -1,0 +1,34 @@
+{{extend 'layout.html'}}
+<h1 style="color: RebeccaPurple  ;">My Recipes </h1>
+<style>
+    a {
+        color:Black
+    }
+    a:hover{
+        color:OrangeRed
+    }
+</style>
+<ul>
+<table>
+{{for i,row in enumerate(rows):}}
+{{if i==items_per_page: break}}
+<tr>
+    <td style="width:0.5%;color: red"><h3>{{=LI(A(row.title, _href=URL("show", args=row.id)))}}</h3></td>
+    <td style="width:0.5%;color: red"><h3>{{=(A('Edit', _href=URL("edit_post", args=row.id)))}}</h3></td>
+    <td style="width:0.5%;"><h3>By: {{=row.author}}</h3></td>
+    <td style="width:0.5%;"><img style="padding-top:5%;width:50%;height:50%;" src="{{=URL('download', args=row.file)}}" /></td>
+</tr>
+{{pass}}
+</table>
+
+</ul>
+       
+ {{pass}}
+
+
+{{if page:}}
+<a href="{{=URL(args=[page-1])}}"><h4>Previous</h></a>
+{{pass}}
+{{if len(rows)>items_per_page:}}
+<a href="{{=URL(args=[page+1])}}"><h4>Next</h4></a>
+{{pass}}

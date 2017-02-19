@@ -1,0 +1,76 @@
+from gluon.contrib.appconfig import AppConfig
+## once in production, remove reload=True to gain full speed
+myconf = AppConfig(reload=True)
+response.formstyle = myconf.take('forms.formstyle')  # or 'bootstrap3_stacked' or 'bootstrap2' or other
+response.form_label_separator = myconf.take('forms.separator')
+
+db = DAL("sqlite://storage.sqlite")
+from gluon.tools import Auth, Service, PluginManager,Crud
+
+auth = Auth(db)
+crud = Crud(db)
+service = Service()
+plugins = PluginManager()
+
+db.define_table(auth.settings.table_user_name,
+                Field('first_name', length=128, default=''),
+                Field('last_name', length=128, default=''),
+                Field('username', length=128, default='',unique=True),
+                Field('email', length=128, default='', unique=True),
+                Field('password', 'password', length=512,readable=False, label='Password'),
+                Field('registration_key', length=512,writable=False, readable=False, default=''),
+                Field('reset_password_key', length=512,writable=False, readable=False, default=''),
+                Field('registration_id', length=512,writable=False, readable=False, default=''))
+
+custom_auth_table = db[auth.settings.table_user_name] # get the custom_auth_table
+custom_auth_table.first_name.requires = \
+IS_NOT_EMPTY(error_message=auth.messages.is_empty)
+custom_auth_table.last_name.requires = \
+IS_NOT_EMPTY(error_message=auth.messages.is_empty)
+custom_auth_table.username.requires = \
+IS_NOT_EMPTY(error_message=auth.messages.is_empty)
+custom_auth_table.password.requires = [IS_STRONG(min=8,upper=1,lower=1,special=1), CRYPT()]
+custom_auth_table.username.requires = [IS_NOT_EMPTY(),IS_NOT_IN_DB(db,custom_auth_table.username)]
+custom_auth_table.email.requires = [IS_EMAIL(error_message=auth.messages.invalid_email),IS_NOT_IN_DB(db, custom_auth_table.email)]
+auth.settings.table_user = custom_auth_table # tell auth to use custom_auth_table
+
+
+
+## create all tables needed by auth if not custom tables
+auth.define_tables(username=False, signature=False)
+
+## configure email
+mail = auth.settings.mailer
+mail.settings.server = 'logging' if request.is_local else myconf.take('smtp.server')
+mail.settings.sender = myconf.take('smtp.sender')
+mail.settings.login =  myconf.take('smtp.login')
+
+## configure auth policy
+auth.settings.registration_requires_verification = False
+auth.settings.registration_requires_approval = False
+auth.settings.reset_password_requires_verification = True
+
+
+
+db.define_table('page',
+                Field('title',unique=True),
+                Field('author','string'),
+                Field('date','date'),
+                Field('description','text'),
+                Field('file','upload'),
+                Field('email'),
+                format='%s(title)s'
+                )
+
+db.page.title.requires = IS_NOT_IN_DB(db, db.page.title)
+db.page.author.requires = IS_NOT_EMPTY()
+db.page.description.requires = IS_NOT_EMPTY()
+db.page.email.requires= IS_EMAIL()
+db.define_table('post',
+                Field('recipe', 'reference page'),
+                Field('visitor'),
+                )
+
+db.post.recipe.requires = IS_IN_DB(db, db.page.id, '%(title)s')
+db.post.recipe.writable = db.post.recipe.readable = False
+db.post.visitor.writable = db.post.visitor.readable = False
