@@ -1,5 +1,23 @@
 # -*- coding: utf-8 -*-
-# Testing
+# Testing- Anam
+#  This is an app-specific example router	
+#	
+#  This simple router is used for setting languages from app/languages directory	
+#  as a part of the application path:  app/<lang>/controller/function	
+#  Language from default.py or 'en' (if the file is not found) is used as	
+#  a default_language	
+#	
+# See <web2py-root-dir>/examples/routes.parametric.example.py for parameter's detail	
+#-------------------------------------------------------------------------------------	
+# To enable this route file you must do the steps:	
+#	
+# 1. rename <web2py-root-dir>/examples/routes.parametric.example.py to routes.py	
+# 2. rename this APP/routes.example.py to APP/routes.py	
+#    (where APP - is your application directory)	
+# 3. restart web2py (or reload routes in web2py admin interfase)	
+#	
+# YOU CAN COPY THIS FILE TO ANY APPLICATION'S ROOT DIRECTORY WITHOUT CHANGES!
+
 from fileutils import abspath
 from languages import read_possible_languages
 
